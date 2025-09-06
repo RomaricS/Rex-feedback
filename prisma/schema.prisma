@@ -1,0 +1,70 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+  directUrl = env("DIRECT_URL")
+}
+
+model User {
+  id            String    @id // Firebase UID
+  name          String?
+  email         String?   @unique
+  emailVerified DateTime?
+  image         String?
+  isGuest       Boolean   @default(false)
+  createdAt     DateTime  @default(now())
+  updatedAt     DateTime  @updatedAt
+  
+  feedbacks     Feedback[]
+
+  @@map("users")
+}
+
+model Feedback {
+  id          String   @id @default(cuid())
+  userId      String   @unique // One feedback per user
+  title       String
+  country     String?
+  program     String   // Express Entry, PNP, etc.
+  isActive    Boolean  @default(true)
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+  
+  user        User           @relation(fields: [userId], references: [id], onDelete: Cascade)
+  steps       ProcessStep[]
+
+  @@map("feedbacks")
+}
+
+model ProcessStep {
+  id          String    @id @default(cuid())
+  feedbackId  String
+  stepType    StepType
+  stepName    String
+  completedAt DateTime?
+  comment     String?   @db.Text
+  createdAt   DateTime  @default(now())
+  updatedAt   DateTime  @updatedAt
+  
+  feedback    Feedback  @relation(fields: [feedbackId], references: [id], onDelete: Cascade)
+
+  @@map("process_steps")
+}
+
+enum StepType {
+  ITA              // Invitation to Apply
+  AOR              // Acknowledgment of Receipt
+  MEDICAL          // Medical Exam
+  BIOMETRICS       // Biometrics
+  BACKGROUND_CHECK // Background Check
+  PPR              // Passport Request
+  COPR             // Confirmation of Permanent Residence
+  ECOPR            // Electronic COPR
+  LANDING          // Landing/First Entry
+}
