@@ -1,7 +1,8 @@
 "use client"
 
 import { useState, useEffect } from "react"
-import { useRouter, useParams } from "next/navigation"
+import { useParams } from "next/navigation"
+import { useRouter } from "@/i18n/routing"
 import { useAuth } from "@/contexts/auth-context"
 import { Button } from "@/components/ui/button"
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
@@ -16,7 +17,7 @@ import {
   SelectValue,
 } from "@/components/ui/select"
 import { ArrowLeft, Plus, Trash2 } from "lucide-react"
-import Link from "next/link"
+import {Link} from "@/i18n/routing"
 import { feedbackService, Feedback } from "@/lib/feedback-service"
 
 const programs = [
@@ -82,6 +83,7 @@ export default function EditFeedbackPage() {
     title: "",
     country: "",
     program: "",
+    applicationType: "", // inland or outland
   })
   
   const [steps, setSteps] = useState<ProcessStep[]>([
@@ -115,6 +117,7 @@ export default function EditFeedbackPage() {
         title: feedbackData.title,
         country: feedbackData.country || "",
         program: feedbackData.program,
+        applicationType: feedbackData.applicationType || "",
       })
 
       const formattedSteps = feedbackData.steps.map(step => ({
@@ -177,6 +180,7 @@ export default function EditFeedbackPage() {
         title: formData.title,
         country: formData.country || undefined,
         program: formData.program,
+        applicationType: formData.applicationType,
         steps: filteredSteps,
       })
 
@@ -290,6 +294,23 @@ export default function EditFeedbackPage() {
                           {program}
                         </SelectItem>
                       ))}
+                    </SelectContent>
+                  </Select>
+                </div>
+
+                <div>
+                  <Label htmlFor="applicationType">Application Type *</Label>
+                  <Select
+                    required
+                    value={formData.applicationType}
+                    onValueChange={(value) => setFormData({ ...formData, applicationType: value })}
+                  >
+                    <SelectTrigger>
+                      <SelectValue placeholder="Select application type" />
+                    </SelectTrigger>
+                    <SelectContent>
+                      <SelectItem value="inland">Inland (Applying from within Canada)</SelectItem>
+                      <SelectItem value="outland">Outland (Applying from outside Canada)</SelectItem>
                     </SelectContent>
                   </Select>
                 </div>

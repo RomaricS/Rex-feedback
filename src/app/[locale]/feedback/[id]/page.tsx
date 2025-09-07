@@ -8,7 +8,7 @@ import { Badge } from "@/components/ui/badge"
 import { Separator } from "@/components/ui/separator"
 import { ArrowLeft, Edit, Calendar, MapPin, FileText, Trash2 } from "lucide-react"
 import { format } from "date-fns"
-import Link from "next/link"
+import {Link} from "@/i18n/routing"
 import { feedbackService, Feedback } from "@/lib/feedback-service"
 import { useAuth } from "@/contexts/auth-context"
 

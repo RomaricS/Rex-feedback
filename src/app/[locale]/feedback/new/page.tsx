@@ -1,7 +1,7 @@
 "use client"
 
 import { useState } from "react"
-import { useRouter } from "next/navigation"
+import { useRouter } from "@/i18n/routing"
 import { useAuth } from "@/contexts/auth-context"
 import { feedbackService } from "@/lib/feedback-service"
 import { Button } from "@/components/ui/button"
@@ -18,7 +18,7 @@ import {
 } from "@/components/ui/select"
 import { Checkbox } from "@/components/ui/checkbox"
 import { ArrowLeft, Plus, Trash2 } from "lucide-react"
-import Link from "next/link"
+import {Link} from "@/i18n/routing"
 
 const programs = [
   "Express Entry - General",
@@ -78,6 +78,7 @@ export default function NewFeedbackPage() {
     title: "",
     country: "",
     program: "",
+    applicationType: "", // inland or outland
   })
   
   const [steps, setSteps] = useState<ProcessStep[]>([
@@ -128,6 +129,7 @@ export default function NewFeedbackPage() {
         title: formData.title,
         country: formData.country || undefined,
         program: formData.program,
+        applicationType: formData.applicationType,
         userId: user.uid,
         steps: filteredSteps,
         isActive: true
@@ -227,6 +229,23 @@ export default function NewFeedbackPage() {
                           {program}
                         </SelectItem>
                       ))}
+                    </SelectContent>
+                  </Select>
+                </div>
+
+                <div>
+                  <Label htmlFor="applicationType">Application Type *</Label>
+                  <Select
+                    required
+                    value={formData.applicationType}
+                    onValueChange={(value) => setFormData({ ...formData, applicationType: value })}
+                  >
+                    <SelectTrigger>
+                      <SelectValue placeholder="Select application type" />
+                    </SelectTrigger>
+                    <SelectContent>
+                      <SelectItem value="inland">Inland (Applying from within Canada)</SelectItem>
+                      <SelectItem value="outland">Outland (Applying from outside Canada)</SelectItem>
                     </SelectContent>
                   </Select>
                 </div>

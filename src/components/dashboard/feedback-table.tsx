@@ -14,9 +14,10 @@ import { Badge } from "@/components/ui/badge"
 import { Button } from "@/components/ui/button"
 import { Eye, ChevronLeft, ChevronRight, Edit, Trash2 } from "lucide-react"
 import { format } from "date-fns"
-import Link from "next/link"
+import {Link} from "@/i18n/routing"
 import { feedbackService, Feedback } from "@/lib/feedback-service"
 import { useAuth } from "@/contexts/auth-context"
+import { useSearch } from "@/contexts/search-context"
 
 
 const stepColors: Record<string, string> = {
@@ -33,13 +34,7 @@ const stepColors: Record<string, string> = {
   LANDING: "bg-teal-100 text-teal-800",
 }
 
-interface FeedbackTableProps {
-  filters?: {
-    program?: string
-    country?: string
-    status?: string
-  }
-}
+interface FeedbackTableProps {}
 
 function getCurrentStep(steps: Feedback['steps']): string {
   if (!steps.length) return "N/A"
@@ -74,8 +69,9 @@ function calculateProcessingTime(feedback: Feedback): string {
   return diffMonths > 0 ? `${diffMonths} months` : "Less than 1 month"
 }
 
-export function FeedbackTable({ filters = {} }: FeedbackTableProps) {
+export function FeedbackTable({}: FeedbackTableProps) {
   const { user } = useAuth()
+  const { filters } = useSearch()
   const [feedbacks, setFeedbacks] = useState<Feedback[]>([])
   const [loading, setLoading] = useState(true)
   const [page, setPage] = useState(1)
@@ -91,7 +87,7 @@ export function FeedbackTable({ filters = {} }: FeedbackTableProps) {
   // Update filters ref when props change
   useEffect(() => {
     filtersRef.current = filters
-  }, [filters.program, filters.country, filters.status])
+  }, [filters.program, filters.country, filters.status, filters.search])
 
   const loadFeedbacks = async (resetPage = false) => {
     if (loadingRef.current) return
@@ -152,7 +148,7 @@ export function FeedbackTable({ filters = {} }: FeedbackTableProps) {
   // Reload when filters change
   useEffect(() => {
     loadFeedbacks(true)
-  }, [filters.program, filters.country, filters.status])
+  }, [filters.program, filters.country, filters.status, filters.search])
 
   // Load when page changes (but not on initial mount)
   useEffect(() => {
@@ -195,21 +191,25 @@ export function FeedbackTable({ filters = {} }: FeedbackTableProps) {
   }
 
   return (
-    <Card className="glass-card shadow-canadian transition-smooth">
-      <CardHeader className="flex flex-row items-center justify-between">
-        <CardTitle className="flex items-center gap-2">
-          <div className="p-2 bg-gradient-to-br from-green-500/10 to-blue-500/10 dark:from-green-400/20 dark:to-blue-400/20 rounded-lg">
-            <span className="text-lg">💬</span>
+    <div className="premium-card hover-lift transition-smooth">
+      <div className="p-8">
+        <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4 mb-8">
+          <div className="flex items-center gap-4">
+            <div className="p-4 bg-primary/10 rounded-2xl">
+              <span className="text-2xl">💬</span>
+            </div>
+            <div>
+              <h2 className="text-2xl font-bold text-foreground">Community Feedbacks</h2>
+              <p className="text-muted-foreground font-medium">Real experiences from the community</p>
+            </div>
           </div>
-          Community Feedbacks
-        </CardTitle>
-        {user && (
-          <Button asChild>
-            <Link href="/feedback/new">Add Your Feedback</Link>
-          </Button>
-        )}
-      </CardHeader>
-      <CardContent>
+          {user && (
+            <Button asChild className="bg-primary hover:bg-primary/90 shadow-lg">
+              <Link href="/feedback/new">Add Your Feedback</Link>
+            </Button>
+          )}
+        </div>
+        <div>
         {loading ? (
           <div className="flex justify-center py-8">
             <div className="text-muted-foreground">Loading feedbacks...</div>
@@ -228,6 +228,7 @@ export function FeedbackTable({ filters = {} }: FeedbackTableProps) {
                   <TableHead>Title</TableHead>
                   <TableHead>Program</TableHead>
                   <TableHead>Country</TableHead>
+                  <TableHead>Type</TableHead>
                   <TableHead>Current Step</TableHead>
                   <TableHead>Processing Time</TableHead>
                   <TableHead>Submitted</TableHead>
@@ -237,7 +238,7 @@ export function FeedbackTable({ filters = {} }: FeedbackTableProps) {
               <TableBody>
                 {feedbacks.length === 0 ? (
                   <TableRow>
-                    <TableCell colSpan={7} className="text-center py-8 text-muted-foreground">
+                    <TableCell colSpan={8} className="text-center py-8 text-muted-foreground">
                       No feedbacks found
                     </TableCell>
                   </TableRow>
@@ -255,6 +256,12 @@ export function FeedbackTable({ filters = {} }: FeedbackTableProps) {
                           <Badge variant="outline">{feedback.program}</Badge>
                         </TableCell>
                         <TableCell>{feedback.country || "N/A"}</TableCell>
+                        <TableCell>
+                          <Badge variant={feedback.applicationType === 'inland' ? 'default' : 'secondary'}>
+                            {feedback.applicationType === 'inland' ? 'Inland' : 
+                             feedback.applicationType === 'outland' ? 'Outland' : 'N/A'}
+                          </Badge>
+                        </TableCell>
                         <TableCell>
                           <Badge 
                             className={stepColors[currentStep] || "bg-gray-100 text-gray-800"}
@@ -311,8 +318,8 @@ export function FeedbackTable({ filters = {} }: FeedbackTableProps) {
                   const processingTime = calculateProcessingTime(feedback)
                   
                   return (
-                    <Card key={feedback.id} className="p-4 glass-card shadow-canadian transition-smooth hover:shadow-maple group">
-                      <div className="space-y-3">
+                    <div key={feedback.id} className="stats-card hover-lift group">
+                      <div className="p-6 space-y-4">
                         <div className="flex justify-between items-start gap-2">
                           <h3 className="font-medium text-sm leading-tight flex-1">
                             {feedback.title}
@@ -357,6 +364,14 @@ export function FeedbackTable({ filters = {} }: FeedbackTableProps) {
                             >
                               {currentStep}
                             </Badge>
+                            {feedback.applicationType && (
+                              <Badge 
+                                variant={feedback.applicationType === 'inland' ? 'default' : 'secondary'}
+                                className="text-xs"
+                              >
+                                {feedback.applicationType === 'inland' ? 'Inland' : 'Outland'}
+                              </Badge>
+                            )}
                           </div>
                           
                           <div className="grid grid-cols-2 gap-4 text-sm text-muted-foreground">
@@ -373,7 +388,7 @@ export function FeedbackTable({ filters = {} }: FeedbackTableProps) {
                           </div>
                         </div>
                       </div>
-                    </Card>
+                    </div>
                   )
                 })
               )}
@@ -406,7 +421,8 @@ export function FeedbackTable({ filters = {} }: FeedbackTableProps) {
             </div>
           </>
         )}
-      </CardContent>
-    </Card>
+        </div>
+      </div>
+    </div>
   )
 }

@@ -9,7 +9,6 @@ import {
   getDocs, 
   doc, 
   updateDoc, 
-  deleteDoc, 
   getDoc,
   Timestamp,
   DocumentSnapshot 
@@ -29,6 +28,7 @@ export interface Feedback {
   title: string
   country?: string
   program: string
+  applicationType?: string // inland or outland
   userId: string
   steps: ProcessStep[]
   isActive: boolean

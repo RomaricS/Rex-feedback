@@ -44,32 +44,32 @@
 }
 
 :root {
-  --radius: 0.625rem;
-  /* Canadian-inspired theme - Light Mode */
-  --background: oklch(0.99 0.005 0); /* Pure white with subtle warmth */
-  --foreground: oklch(0.145 0.02 240); /* Deep navy */
-  --card: oklch(0.985 0.008 0); /* Soft white */
-  --card-foreground: oklch(0.145 0.02 240);
-  --popover: oklch(0.985 0.008 0);
-  --popover-foreground: oklch(0.145 0.02 240);
-  --primary: oklch(0.55 0.18 15); /* Canadian Red */
-  --primary-foreground: oklch(0.99 0.005 0);
-  --secondary: oklch(0.95 0.015 240); /* Light blue-gray */
-  --secondary-foreground: oklch(0.25 0.02 240);
-  --muted: oklch(0.95 0.01 240);
-  --muted-foreground: oklch(0.45 0.02 240);
-  --accent: oklch(0.92 0.02 240); /* Soft blue accent */
-  --accent-foreground: oklch(0.25 0.02 240);
+  --radius: 0.75rem;
+  /* Modern Blue-based theme - Light Mode */
+  --background: oklch(0.995 0.002 0); /* Ultra clean white */
+  --foreground: oklch(0.09 0.01 240); /* Rich dark blue */
+  --card: oklch(0.99 0.002 0); /* Crisp card white */
+  --card-foreground: oklch(0.09 0.01 240);
+  --popover: oklch(0.995 0.002 0);
+  --popover-foreground: oklch(0.09 0.01 240);
+  --primary: oklch(0.47 0.13 240); /* Modern blue */
+  --primary-foreground: oklch(0.995 0.002 0);
+  --secondary: oklch(0.96 0.008 240); /* Subtle blue-gray */
+  --secondary-foreground: oklch(0.2 0.01 240);
+  --muted: oklch(0.97 0.003 240);
+  --muted-foreground: oklch(0.46 0.006 240);
+  --accent: oklch(0.94 0.01 240); /* Clean accent */
+  --accent-foreground: oklch(0.2 0.01 240);
   --destructive: oklch(0.577 0.245 27.325);
-  --border: oklch(0.9 0.01 240);
-  --input: oklch(0.95 0.01 240);
-  --ring: oklch(0.55 0.18 15); /* Canadian Red ring */
-  /* Canadian-themed chart colors */
-  --chart-1: oklch(0.55 0.18 15); /* Canadian Red */
-  --chart-2: oklch(0.45 0.15 240); /* Canadian Blue */
-  --chart-3: oklch(0.6 0.12 60); /* Maple Gold */
-  --chart-4: oklch(0.5 0.10 160); /* Forest Green */
-  --chart-5: oklch(0.65 0.08 300); /* Northern Purple */
+  --border: oklch(0.94 0.003 240);
+  --input: oklch(0.97 0.003 240);
+  --ring: oklch(0.47 0.13 240);
+  /* Professional chart colors */
+  --chart-1: oklch(0.47 0.13 240); /* Primary Blue */
+  --chart-2: oklch(0.55 0.16 15); /* Professional Red */
+  --chart-3: oklch(0.62 0.11 60); /* Golden */
+  --chart-4: oklch(0.52 0.09 160); /* Forest Green */
+  --chart-5: oklch(0.65 0.07 300); /* Purple */
   --sidebar: oklch(0.985 0 0);
   --sidebar-foreground: oklch(0.145 0 0);
   --sidebar-primary: oklch(0.205 0 0);
@@ -81,39 +81,39 @@
 }
 
 .dark {
-  /* Canadian-inspired theme - Dark Mode */
-  --background: oklch(0.08 0.005 240); /* Deep navy background */
-  --foreground: oklch(0.95 0.01 0); /* Off-white text */
-  --card: oklch(0.12 0.01 240); /* Darker card background */
-  --card-foreground: oklch(0.95 0.01 0);
-  --popover: oklch(0.12 0.01 240);
-  --popover-foreground: oklch(0.95 0.01 0);
-  --primary: oklch(0.65 0.20 15); /* Brighter Canadian Red */
-  --primary-foreground: oklch(0.08 0.005 240);
-  --secondary: oklch(0.18 0.02 240); /* Dark blue-gray */
-  --secondary-foreground: oklch(0.85 0.01 0);
-  --muted: oklch(0.15 0.02 240);
-  --muted-foreground: oklch(0.6 0.01 240);
-  --accent: oklch(0.2 0.03 240); /* Darker blue accent */
-  --accent-foreground: oklch(0.9 0.01 0);
+  /* Modern Dark Mode - Professional */
+  --background: oklch(0.16 0.008 240); /* Softer dark background */
+  --foreground: oklch(0.95 0.002 0); /* Crisp white text */
+  --card: oklch(0.19 0.01 240); /* Elevated dark cards */
+  --card-foreground: oklch(0.95 0.002 0);
+  --popover: oklch(0.19 0.01 240);
+  --popover-foreground: oklch(0.95 0.002 0);
+  --primary: oklch(0.58 0.15 240); /* Vibrant blue */
+  --primary-foreground: oklch(0.99 0.002 0);
+  --secondary: oklch(0.20 0.012 240); /* Refined secondary */
+  --secondary-foreground: oklch(0.9 0.002 0);
+  --muted: oklch(0.17 0.01 240);
+  --muted-foreground: oklch(0.68 0.008 240);
+  --accent: oklch(0.22 0.015 240); /* Subtle accent */
+  --accent-foreground: oklch(0.9 0.002 0);
   --destructive: oklch(0.704 0.191 22.216);
-  --border: oklch(0.2 0.02 240);
-  --input: oklch(0.18 0.02 240);
-  --ring: oklch(0.65 0.20 15); /* Canadian Red ring */
-  /* Canadian-themed chart colors - Dark Mode */
-  --chart-1: oklch(0.65 0.20 15); /* Brighter Canadian Red */
-  --chart-2: oklch(0.55 0.18 240); /* Brighter Canadian Blue */
-  --chart-3: oklch(0.7 0.15 60); /* Brighter Maple Gold */
-  --chart-4: oklch(0.6 0.12 160); /* Brighter Forest Green */
-  --chart-5: oklch(0.7 0.10 300); /* Brighter Northern Purple */
-  --sidebar: oklch(0.205 0 0);
-  --sidebar-foreground: oklch(0.985 0 0);
-  --sidebar-primary: oklch(0.488 0.243 264.376);
-  --sidebar-primary-foreground: oklch(0.985 0 0);
-  --sidebar-accent: oklch(0.269 0 0);
-  --sidebar-accent-foreground: oklch(0.985 0 0);
-  --sidebar-border: oklch(1 0 0 / 10%);
-  --sidebar-ring: oklch(0.556 0 0);
+  --border: oklch(0.23 0.012 240); /* Defined borders */
+  --input: oklch(0.17 0.01 240);
+  --ring: oklch(0.58 0.15 240);
+  /* Professional dark chart colors */
+  --chart-1: oklch(0.58 0.15 240); /* Bright Blue */
+  --chart-2: oklch(0.68 0.18 15); /* Coral Red */
+  --chart-3: oklch(0.72 0.13 60); /* Golden */
+  --chart-4: oklch(0.65 0.11 160); /* Emerald */
+  --chart-5: oklch(0.72 0.09 300); /* Amethyst */
+  --sidebar: oklch(0.14 0.01 240);
+  --sidebar-foreground: oklch(0.95 0.002 0);
+  --sidebar-primary: oklch(0.58 0.15 240);
+  --sidebar-primary-foreground: oklch(0.99 0.002 0);
+  --sidebar-accent: oklch(0.20 0.012 240);
+  --sidebar-accent-foreground: oklch(0.9 0.002 0);
+  --sidebar-border: oklch(0.23 0.012 240);
+  --sidebar-ring: oklch(0.58 0.15 240);
 }
 
 @layer base {
@@ -126,44 +126,60 @@
 }
 
 @layer components {
-  /* Canadian-themed gradients */
+  /* Modern professional gradients */
   .bg-canadian-gradient {
-    @apply bg-gradient-to-br from-red-500/10 via-white to-blue-500/10 dark:from-red-500/5 dark:via-gray-900 dark:to-blue-500/5;
+    @apply bg-gradient-to-br from-blue-50/50 via-white to-blue-50/30 dark:from-blue-950/20 dark:via-background dark:to-blue-900/10;
   }
   
   .bg-maple-gradient {
-    @apply bg-gradient-to-r from-red-500 to-red-600 dark:from-red-400 dark:to-red-500;
+    @apply bg-gradient-to-r from-blue-600 to-blue-700 dark:from-blue-500 dark:to-blue-600;
   }
   
   .bg-northern-gradient {
-    @apply bg-gradient-to-br from-blue-500 via-blue-600 to-purple-600 dark:from-blue-400 dark:via-blue-500 dark:to-purple-500;
+    @apply bg-gradient-to-br from-blue-600 via-blue-700 to-indigo-700 dark:from-blue-500 dark:via-blue-600 dark:to-indigo-600;
   }
   
-  /* Glassmorphism effects */
+  /* Premium card effects */
   .glass-card {
-    @apply backdrop-blur-sm bg-white/80 dark:bg-gray-900/80 border border-white/20 dark:border-gray-800/50;
+    @apply bg-card/95 backdrop-blur-sm border border-border/50 rounded-xl shadow-lg shadow-black/[0.02] dark:shadow-black/20;
+  }
+  
+  .premium-card {
+    @apply bg-card border border-border/30 rounded-2xl shadow-2xl shadow-blue-500/[0.08] dark:shadow-blue-900/30;
+  }
+  
+  .stats-card {
+    @apply bg-gradient-to-br from-card to-card/80 border border-border/40 rounded-xl shadow-lg shadow-black/[0.03] dark:shadow-black/25 backdrop-blur-sm;
   }
   
   .glass-nav {
-    @apply backdrop-blur-md bg-white/90 dark:bg-gray-900/90 border-b border-white/20 dark:border-gray-800/50;
+    @apply bg-background/80 backdrop-blur-xl border-b border-border/30;
   }
   
-  /* Canadian-themed shadows */
+  /* Sophisticated shadows */
   .shadow-canadian {
-    @apply shadow-lg shadow-red-500/10 dark:shadow-red-400/20;
+    @apply shadow-lg shadow-blue-500/[0.08] dark:shadow-blue-900/40;
   }
   
   .shadow-maple {
-    @apply shadow-xl shadow-red-500/20 dark:shadow-red-400/30;
+    @apply shadow-xl shadow-blue-600/[0.12] dark:shadow-blue-800/50;
   }
   
-  /* Smooth transitions */
+  .shadow-premium {
+    @apply shadow-2xl shadow-blue-500/[0.15] dark:shadow-blue-900/60;
+  }
+  
+  /* Smooth professional transitions */
   .transition-smooth {
     @apply transition-all duration-300 ease-out;
   }
   
   .transition-bounce {
-    @apply transition-all duration-200 ease-in-out hover:scale-105 active:scale-95;
+    @apply transition-all duration-200 ease-in-out hover:scale-[1.02] active:scale-[0.98];
+  }
+  
+  .hover-lift {
+    @apply transition-all duration-300 ease-out hover:shadow-xl hover:shadow-blue-500/[0.12] hover:-translate-y-1 dark:hover:shadow-blue-900/50;
   }
   
   /* Maple leaf decoration (using CSS) */
