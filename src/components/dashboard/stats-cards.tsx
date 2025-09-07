@@ -1,7 +1,7 @@
 "use client"
 
 import { useEffect, useState } from "react"
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
+import { Card, CardContent, CardHeader } from "@/components/ui/card"
 import { Users, TrendingUp, Clock, CheckCircle } from "lucide-react"
 import { statsService, Stats } from "@/lib/stats-service"
 
@@ -70,7 +70,7 @@ export function StatsCards() {
       title: "This Month",
       value: stats?.thisMonthFeedbacks.toLocaleString() || "0",
       icon: TrendingUp,
-      change: `${stats?.feedbackGrowth > 0 ? "+" : ""}${stats?.feedbackGrowth.toFixed(1)}%`,
+      change: `${(stats?.feedbackGrowth || 0) > 0 ? "+" : ""}${(stats?.feedbackGrowth || 0).toFixed(1)}%`,
       changeType: (stats?.feedbackGrowth || 0) >= 0 ? "positive" : "negative",
     },
   ]

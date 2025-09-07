@@ -27,8 +27,7 @@ import {
 import { MapPin, Languages, Search, Filter, X } from "lucide-react"
 import { ThemeToggle } from "@/components/ui/theme-toggle"
 import { useTranslations, useLocale } from 'next-intl'
-import { useRouter, usePathname } from '@/i18n/routing'
-import { useState } from 'react'
+import { useRouter, usePathname } from '../../../i18n/routing'
 
 const programs = [
   "Express Entry - General",
@@ -94,6 +93,7 @@ export function Header({
       router.push(pathname, {locale: newLocale})
     } catch (error) {
       // Fallback to dashboard if there's an error with pathname
+      console.error("Error switching language, redirecting to dashboard:", error)
       router.push('/dashboard', {locale: newLocale})
     }
   }

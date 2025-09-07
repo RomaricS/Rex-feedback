@@ -1,14 +1,11 @@
 "use client"
 
-import { useTranslations } from 'next-intl'
 import { StatsCards } from "@/components/dashboard/stats-cards"
 import { FeedbackTable } from "@/components/dashboard/feedback-table"
 import { ProcessingTimeChart } from "@/components/dashboard/processing-time-chart"
 import { StatusDistributionChart } from "@/components/dashboard/status-distribution-chart"
 
 export default function DashboardPage() {
-  const t = useTranslations('dashboard')
-
   return (
       <div className="space-y-8">
       <div className="relative overflow-hidden">

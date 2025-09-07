@@ -1,9 +1,9 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 import { 
   collection, 
   query, 
   where, 
   getDocs, 
-  count,
   getCountFromServer,
   Timestamp 
 } from "firebase/firestore"

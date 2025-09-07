@@ -1,9 +1,9 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 import { 
   collection, 
   query, 
   where, 
   getDocs,
-  Timestamp 
 } from "firebase/firestore"
 import { db } from "@/lib/firebase"
 import { cacheService } from "@/lib/cache-service"

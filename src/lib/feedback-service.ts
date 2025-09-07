@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 import { 
   collection, 
   addDoc, 
@@ -170,7 +171,7 @@ class FeedbackService {
         updateData.steps = updates.steps.map(step => ({
           ...step,
           completedAt: step.completedAt ? Timestamp.fromDate(step.completedAt) : null
-        }))
+        })) as unknown as ProcessStep[]
       }
 
       await updateDoc(docRef, updateData)

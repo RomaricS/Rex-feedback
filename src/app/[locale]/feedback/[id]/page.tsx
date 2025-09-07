@@ -8,7 +8,7 @@ import { Badge } from "@/components/ui/badge"
 import { Separator } from "@/components/ui/separator"
 import { ArrowLeft, Edit, Calendar, MapPin, FileText, Trash2 } from "lucide-react"
 import { format } from "date-fns"
-import {Link} from "@/i18n/routing"
+import {Link} from "../../../../../i18n/routing"
 import { feedbackService, Feedback } from "@/lib/feedback-service"
 import { useAuth } from "@/contexts/auth-context"
 
@@ -38,30 +38,30 @@ export default function FeedbackDetailPage() {
   const [deleting, setDeleting] = useState(false)
 
   useEffect(() => {
+    const loadFeedback = async () => {
+      try {
+        setLoading(true)
+        setError(null)
+        const feedbackData = await feedbackService.getFeedbackById(feedbackId)
+        
+        if (!feedbackData) {
+          setError("Feedback not found")
+          return
+        }
+
+        setFeedback(feedbackData)
+      } catch (err) {
+        console.error("Error loading feedback:", err)
+        setError("Failed to load feedback details")
+      } finally {
+        setLoading(false)
+      }
+    }
+
     if (feedbackId) {
       loadFeedback()
     }
   }, [feedbackId])
-
-  const loadFeedback = async () => {
-    try {
-      setLoading(true)
-      setError(null)
-      const feedbackData = await feedbackService.getFeedbackById(feedbackId)
-      
-      if (!feedbackData) {
-        setError("Feedback not found")
-        return
-      }
-
-      setFeedback(feedbackData)
-    } catch (err) {
-      console.error("Error loading feedback:", err)
-      setError("Failed to load feedback details")
-    } finally {
-      setLoading(false)
-    }
-  }
 
   const handleDelete = async () => {
     if (!feedback || !user || feedback.userId !== user.uid) return

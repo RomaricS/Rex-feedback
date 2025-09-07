@@ -2,7 +2,7 @@
 
 import { useState, useEffect } from "react"
 import { useParams } from "next/navigation"
-import { useRouter } from "@/i18n/routing"
+import { useRouter } from "../../../../../../i18n/routing"
 import { useAuth } from "@/contexts/auth-context"
 import { Button } from "@/components/ui/button"
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
@@ -17,7 +17,7 @@ import {
   SelectValue,
 } from "@/components/ui/select"
 import { ArrowLeft, Plus, Trash2 } from "lucide-react"
-import {Link} from "@/i18n/routing"
+import {Link} from "../../../../../../i18n/routing"
 import { feedbackService, Feedback } from "@/lib/feedback-service"
 
 const programs = [

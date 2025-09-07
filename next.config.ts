@@ -9,7 +9,7 @@ const nextConfig: NextConfig = {
     workerThreads: false,
   },
   // Configure webpack to be more stable with workers
-  webpack: (config, { dev, isServer }) => {
+  webpack: (config, { dev }) => {
     // Disable webpack's internal Jest worker usage in development
     if (dev) {
       config.cache = false;

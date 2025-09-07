@@ -1,7 +1,6 @@
 "use client"
 
 import { useState, useEffect, useRef } from "react"
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 import {
   Table,
   TableBody,
@@ -14,7 +13,7 @@ import { Badge } from "@/components/ui/badge"
 import { Button } from "@/components/ui/button"
 import { Eye, ChevronLeft, ChevronRight, Edit, Trash2 } from "lucide-react"
 import { format } from "date-fns"
-import {Link} from "@/i18n/routing"
+import {Link} from "../../../i18n/routing"
 import { feedbackService, Feedback } from "@/lib/feedback-service"
 import { useAuth } from "@/contexts/auth-context"
 import { useSearch } from "@/contexts/search-context"
@@ -33,8 +32,6 @@ const stepColors: Record<string, string> = {
   ECOPR: "bg-emerald-100 text-emerald-800",
   LANDING: "bg-teal-100 text-teal-800",
 }
-
-interface FeedbackTableProps {}
 
 function getCurrentStep(steps: Feedback['steps']): string {
   if (!steps.length) return "N/A"

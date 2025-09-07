@@ -20,9 +20,18 @@ const statusColors = [
 ]
 
 const RADIAN = Math.PI / 180
+type LabelProps = {
+  cx: number;
+  cy: number;
+  midAngle: number;
+  innerRadius: number;
+  outerRadius: number;
+  percent: number;
+  index: number;
+}
 const renderCustomizedLabel = ({
   cx, cy, midAngle, innerRadius, outerRadius, percent
-}: any) => {
+}: LabelProps) => {
   const radius = innerRadius + (outerRadius - innerRadius) * 0.5
   const x = cx + radius * Math.cos(-midAngle * RADIAN)
   const y = cy + radius * Math.sin(-midAngle * RADIAN)
@@ -87,62 +96,76 @@ export function StatusDistributionChart() {
         </p>
       </CardHeader>
       <CardContent>
-        {loading ? (
-          <div className="flex items-center justify-center h-[300px]">
-            <div className="flex items-center gap-2 text-muted-foreground pulse-gentle">
-              <span className="text-2xl maple-spinner">🍁</span>
-              <span>Loading chart data...</span>
+        {(() => {
+          if (loading) {
+            return (
+              <div className="flex items-center justify-center h-[300px]">
+                <div className="flex items-center gap-2 text-muted-foreground pulse-gentle">
+                  <span className="text-2xl maple-spinner">🍁</span>
+                  <span>Loading chart data...</span>
+                </div>
+              </div>
+            );
+          }
+
+          if (error) {
+            return (
+              <div className="flex items-center justify-center h-[300px]">
+                <div className="text-red-500 flex items-center gap-2">
+                  <span className="text-xl">⚠️</span>
+                  {error}
+                </div>
+              </div>
+            );
+          }
+
+          if (chartData.length === 0) {
+            return (
+              <div className="flex items-center justify-center h-[300px]">
+                <div className="text-muted-foreground flex items-center gap-2">
+                  <span className="text-xl">📄</span>
+                  No status distribution data available
+                </div>
+              </div>
+            );
+          }
+
+          return (
+            <div className="chart-container">
+              <ResponsiveContainer width="100%" height={300}>
+              <PieChart>
+                <Pie
+                  data={chartData}
+                  cx="50%"
+                  cy="50%"
+                  labelLine={false}
+                  label={renderCustomizedLabel}
+                  outerRadius={80}
+                  fill="#8884d8"
+                  dataKey="value"
+                >
+                  {chartData.map((entry, index) => (
+                    <Cell key={`cell-${index}`} fill={entry.color} />
+                  ))}
+                </Pie>
+                <Tooltip 
+                  formatter={(value: number, name: string, props: { payload: { count: number } }) => [
+                    `${value}% (${props.payload.count} people)`, 
+                    "Percentage"
+                  ]}
+                />
+                <Legend 
+                  verticalAlign="bottom" 
+                  height={36}
+                  formatter={(value) => (
+                    <span style={{ fontSize: 12 }}>{value}</span>
+                  )}
+                />
+              </PieChart>
+            </ResponsiveContainer>
             </div>
-          </div>
-        ) : error ? (
-          <div className="flex items-center justify-center h-[300px]">
-            <div className="text-red-500 flex items-center gap-2">
-              <span className="text-xl">⚠️</span>
-              {error}
-            </div>
-          </div>
-        ) : chartData.length === 0 ? (
-          <div className="flex items-center justify-center h-[300px]">
-            <div className="text-muted-foreground flex items-center gap-2">
-              <span className="text-xl">📄</span>
-              No status distribution data available
-            </div>
-          </div>
-        ) : (
-          <div className="chart-container">
-            <ResponsiveContainer width="100%" height={300}>
-            <PieChart>
-              <Pie
-                data={chartData}
-                cx="50%"
-                cy="50%"
-                labelLine={false}
-                label={renderCustomizedLabel}
-                outerRadius={80}
-                fill="#8884d8"
-                dataKey="value"
-              >
-                {chartData.map((entry, index) => (
-                  <Cell key={`cell-${index}`} fill={entry.color} />
-                ))}
-              </Pie>
-              <Tooltip 
-                formatter={(value: number, name: string, props: any) => [
-                  `${value}% (${props.payload.count} people)`, 
-                  "Percentage"
-                ]}
-              />
-              <Legend 
-                verticalAlign="bottom" 
-                height={36}
-                formatter={(value) => (
-                  <span style={{ fontSize: 12 }}>{value}</span>
-                )}
-              />
-            </PieChart>
-          </ResponsiveContainer>
-          </div>
-        )}
+          );
+        })()}
       </CardContent>
     </Card>
   )

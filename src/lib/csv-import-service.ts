@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 import { feedbackService, Feedback, ProcessStep } from "@/lib/feedback-service"
 
 export interface CSVRow {
@@ -255,7 +256,6 @@ class CSVImportService {
    */
   transformToFeedback(row: CSVRow): Omit<Feedback, 'id' | 'createdAt' | 'updatedAt'> {
     const steps = this.extractProcessSteps(row)
-    const itaDate = this.parseDate(row.ITA)
     
     return {
       title: row.Username.trim(), // Use username as title as requested

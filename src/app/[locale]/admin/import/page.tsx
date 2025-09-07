@@ -8,7 +8,7 @@ import { Label } from "@/components/ui/label"
 import { Textarea } from "@/components/ui/textarea"
 import { Progress } from "@/components/ui/progress"
 import { Alert, AlertDescription } from "@/components/ui/alert"
-import { csvImportService, ImportResult } from "@/lib/csv-import-service"
+import { ImportResult } from "@/lib/csv-import-service"
 import { Upload, FileText, CheckCircle, AlertCircle } from "lucide-react"
 
 export default function ImportPage() {

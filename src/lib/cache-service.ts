@@ -5,7 +5,7 @@ interface CacheEntry<T> {
 }
 
 class CacheService {
-  private cache = new Map<string, CacheEntry<any>>()
+  private cache = new Map<string, CacheEntry<unknown>>()
   
   // Default TTL: 5 minutes for regular data, 10 minutes for charts
   private readonly DEFAULT_TTL = 5 * 60 * 1000

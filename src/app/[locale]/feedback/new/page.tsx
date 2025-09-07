@@ -1,7 +1,7 @@
 "use client"
 
 import { useState } from "react"
-import { useRouter } from "@/i18n/routing"
+import { useRouter, Link } from "../../../../../i18n/routing"
 import { useAuth } from "@/contexts/auth-context"
 import { feedbackService } from "@/lib/feedback-service"
 import { Button } from "@/components/ui/button"
@@ -16,9 +16,7 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select"
-import { Checkbox } from "@/components/ui/checkbox"
 import { ArrowLeft, Plus, Trash2 } from "lucide-react"
-import {Link} from "@/i18n/routing"
 
 const programs = [
   "Express Entry - General",
