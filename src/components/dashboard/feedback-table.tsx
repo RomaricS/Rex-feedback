@@ -67,6 +67,8 @@ function calculateProcessingTime(feedback: Feedback): string {
   return diffMonths > 0 ? `${diffMonths} months` : "Less than 1 month"
 }
 
+interface FeedbackTableProps {}
+
 export function FeedbackTable({}: FeedbackTableProps) {
   const { user } = useAuth()
   const { filters } = useSearch()

@@ -11,6 +11,7 @@ import {
   doc, 
   updateDoc, 
   getDoc,
+  deleteDoc,
   Timestamp,
   DocumentSnapshot 
 } from "firebase/firestore"
@@ -187,12 +188,9 @@ class FeedbackService {
 
   async deleteFeedback(id: string): Promise<void> {
     try {
-      // Soft delete by setting isActive to false
+      // Hard delete - permanently remove the document
       const docRef = doc(db, this.collectionName, id)
-      await updateDoc(docRef, {
-        isActive: false,
-        updatedAt: Timestamp.fromDate(new Date())
-      })
+      await deleteDoc(docRef)
       
       // Invalidate chart caches when feedback is deleted
       chartDataService.invalidateChartCaches()

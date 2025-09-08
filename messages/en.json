@@ -27,7 +27,7 @@
   "charts": {
     "averageProcessingTime": "Average Processing Time by Program",
     "statusDistribution": "Current Status Distribution",
-    "basedOnCommunityData": "Based on community feedback data",
+    "basedOnCommunityData": "Based on community feedback data (Finished processes only)",
     "journeyProgress": "Where community members are in their journey",
     "loadingChart": "Loading chart data...",
     "noData": "No data available"
