@@ -49,18 +49,44 @@ const programs = [
 ]
 
 const stepOptions = [
-  { value: "ITA", label: "Invitation to Apply (ITA)" },
-  { value: "AOR", label: "Acknowledgment of Receipt (AOR)" },
-  { value: "MIL", label: "Medical Instruction Letter (MIL)" },
-  { value: "MEDICAL_PASSED", label: "Medical Passed" },
-  { value: "BIL", label: "Biometric Instruction Letter (BIL)" },
-  { value: "BIOMETRICS_PASSED", label: "Biometrics Passed" },
-  { value: "BACKGROUND_CHECK", label: "Background Check" },
-  { value: "PPR", label: "Passport Request (PPR)" },
-  { value: "COPR", label: "Confirmation of Permanent Residence (COPR)" },
-  { value: "ECOPR", label: "Electronic COPR (eCOPR)" },
-  { value: "LANDING", label: "Landing/First Entry" },
+  { value: "ITA", label: "Invitation to Apply (ITA)", order: 1, required: true },
+  { value: "AOR", label: "Acknowledgment of Receipt (AOR)", order: 2, requires: ["ITA"] },
+  { value: "MIL", label: "Medical Instruction Letter (MIL)", order: 3, requires: ["AOR"] },
+  { value: "MEDICAL_PASSED", label: "Medical Passed", order: 4, requires: ["MIL"] },
+  { value: "BIL", label: "Biometric Instruction Letter (BIL)", order: 3, requires: ["AOR"] },
+  { value: "BIOMETRICS_PASSED", label: "Biometrics Passed", order: 4, requires: ["BIL"] },
+  { value: "BACKGROUND_CHECK", label: "Background Check", order: 5, requires: ["AOR"] },
+  { value: "PPR", label: "Passport Request (PPR)", order: 6, requires: ["AOR"] },
+  { value: "COPR", label: "Confirmation of Permanent Residence (COPR)", order: 7, requires: ["PPR"] },
+  { value: "ECOPR", label: "Electronic COPR (eCOPR)", order: 7, requires: ["PPR"] },
+  { value: "LANDING", label: "Landing/First Entry", order: 8, requires: ["COPR", "ECOPR"] },
 ]
+
+// Helper function to get available step options based on existing steps
+const getAvailableStepOptions = (existingSteps: ProcessStep[], currentStepIndex?: number) => {
+  const existingStepTypes = existingSteps
+    .map((step, index) => index !== currentStepIndex ? step.stepType : null)
+    .filter(Boolean)
+
+  return stepOptions.filter(option => {
+    // Don't allow duplicate steps
+    if (existingStepTypes.includes(option.value)) {
+      return false
+    }
+
+    // Always allow ITA as the first step
+    if (option.value === "ITA") {
+      return true
+    }
+
+    // For other steps, check if requirements are met
+    if (option.requires) {
+      return option.requires.some(requirement => existingStepTypes.includes(requirement))
+    }
+
+    return true
+  }).sort((a, b) => a.order - b.order)
+}
 
 interface ProcessStep {
   stepType: string
@@ -74,10 +100,11 @@ export default function NewFeedbackPage() {
   const router = useRouter()
   const [loading, setLoading] = useState(false)
   const [isAnonymous, setIsAnonymous] = useState(false)
+  const [validationErrors, setValidationErrors] = useState<{[key: string]: string}>({})
   
   const [formData, setFormData] = useState({
     title: "",
-    country: "",
+    country: "N/A",
     program: "",
     applicationType: "", // inland or outland
   })
@@ -86,8 +113,15 @@ export default function NewFeedbackPage() {
     { stepType: "", stepName: "", completedAt: "", comment: "" }
   ])
 
-  const addStep = () => {
-    setSteps([...steps, { stepType: "", stepName: "", completedAt: "", comment: "" }])
+  const addStep = (afterIndex?: number) => {
+    const newStep = { stepType: "", stepName: "", completedAt: "", comment: "" }
+    if (afterIndex !== undefined) {
+      const newSteps = [...steps]
+      newSteps.splice(afterIndex + 1, 0, newStep)
+      setSteps(newSteps)
+    } else {
+      setSteps([...steps, newStep])
+    }
   }
 
   const removeStep = (index: number) => {
@@ -109,19 +143,64 @@ export default function NewFeedbackPage() {
     setSteps(updatedSteps)
   }
 
+  const validateForm = () => {
+    const errors: {[key: string]: string} = {}
+    
+    // Validate basic form fields
+    if (!formData.title.trim()) {
+      errors.title = "Title is required"
+    }
+    if (!formData.program) {
+      errors.program = "Immigration program is required"  
+    }
+    if (!formData.applicationType) {
+      errors.applicationType = "Application type is required"
+    }
+
+    // Validate steps
+    const validSteps = steps.filter(step => step.stepType)
+    if (validSteps.length === 0) {
+      errors.steps = "At least one process step is required"
+    }
+
+    // Validate each step
+    validSteps.forEach((step, index) => {
+      if (!step.completedAt) {
+        errors[`step_${index}_date`] = "Completion date is required for each step"
+      }
+    })
+
+    // Check for ITA requirement if there are multiple steps
+    if (validSteps.length > 1 && !validSteps.some(step => step.stepType === "ITA")) {
+      errors.ita_required = "ITA (Invitation to Apply) step is required when adding multiple steps"
+    }
+
+    setValidationErrors(errors)
+    return Object.keys(errors).length === 0
+  }
+
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
+    
+    // Clear previous validation errors
+    setValidationErrors({})
+    
     if (!user && !isAnonymous) {
       alert("Please sign in or submit anonymously")
       return
     }
 
+    // Validate form
+    if (!validateForm()) {
+      return
+    }
+
     setLoading(true)
     try {
-      const filteredSteps = steps.filter(step => step.stepType && step.stepName)
+      const filteredSteps = steps.filter(step => step.stepType && step.stepName && step.completedAt)
         .map(step => ({
           ...step,
-          completedAt: step.completedAt ? new Date(step.completedAt) : null
+          completedAt: new Date(step.completedAt!)
         }))
 
       await feedbackService.createFeedback({
@@ -137,7 +216,9 @@ export default function NewFeedbackPage() {
       router.push("/dashboard")
     } catch (error) {
       console.error("Error submitting feedback:", error)
-      alert("Failed to submit feedback")
+      setValidationErrors({ 
+        submit: "Failed to submit feedback. Please check your information and try again." 
+      })
     } finally {
       setLoading(false)
     }
@@ -211,11 +292,16 @@ export default function NewFeedbackPage() {
                     value={formData.title}
                     onChange={(e) => setFormData({ ...formData, title: e.target.value })}
                     placeholder="e.g., James - CRS 520"
-                    className={formData.title.length > 100 ? 'border-red-500 focus:border-red-500' : ''}
+                    className={validationErrors.title ? 'border-red-500 focus:border-red-500' : ''}
                   />
-                  <p className="text-xs text-muted-foreground mt-1">
-                    Keep it short and descriptive
-                  </p>
+                  {validationErrors.title && (
+                    <p className="text-xs text-red-500 mt-1">{validationErrors.title}</p>
+                  )}
+                  {!validationErrors.title && (
+                    <p className="text-xs text-muted-foreground mt-1">
+                      Keep it short and descriptive
+                    </p>
+                  )}
                 </div>
 
                 <div>
@@ -225,7 +311,7 @@ export default function NewFeedbackPage() {
                     value={formData.program}
                     onValueChange={(value) => setFormData({ ...formData, program: value })}
                   >
-                    <SelectTrigger>
+                    <SelectTrigger className={validationErrors.program ? 'border-red-500 focus:border-red-500' : ''}>
                       <SelectValue placeholder="Select your program" />
                     </SelectTrigger>
                     <SelectContent>
@@ -236,6 +322,9 @@ export default function NewFeedbackPage() {
                       ))}
                     </SelectContent>
                   </Select>
+                  {validationErrors.program && (
+                    <p className="text-xs text-red-500 mt-1">{validationErrors.program}</p>
+                  )}
                 </div>
 
                 <div>
@@ -245,7 +334,7 @@ export default function NewFeedbackPage() {
                     value={formData.applicationType}
                     onValueChange={(value) => setFormData({ ...formData, applicationType: value })}
                   >
-                    <SelectTrigger>
+                    <SelectTrigger className={validationErrors.applicationType ? 'border-red-500 focus:border-red-500' : ''}>
                       <SelectValue placeholder="Select application type" />
                     </SelectTrigger>
                     <SelectContent>
@@ -253,6 +342,9 @@ export default function NewFeedbackPage() {
                       <SelectItem value="outland">Outland (Applying from outside Canada)</SelectItem>
                     </SelectContent>
                   </Select>
+                  {validationErrors.applicationType && (
+                    <p className="text-xs text-red-500 mt-1">{validationErrors.applicationType}</p>
+                  )}
                 </div>
 
                 <div>
@@ -268,77 +360,130 @@ export default function NewFeedbackPage() {
 
               <div>
                 <div className="flex items-center justify-between mb-4">
-                  <Label>Process Steps</Label>
-                  <Button type="button" variant="outline" size="sm" onClick={addStep}>
-                    <Plus className="h-4 w-4 mr-2" />
-                    Add Step
-                  </Button>
+                  <Label className="text-lg font-semibold">Process Steps</Label>
                 </div>
+                
+                {validationErrors.steps && (
+                  <div className="bg-red-50 dark:bg-red-950 border border-red-200 dark:border-red-800 rounded-lg p-3 mb-4">
+                    <p className="text-sm text-red-800 dark:text-red-200">{validationErrors.steps}</p>
+                  </div>
+                )}
+                
+                {validationErrors.ita_required && (
+                  <div className="bg-amber-50 dark:bg-amber-950 border border-amber-200 dark:border-amber-800 rounded-lg p-3 mb-4">
+                    <p className="text-sm text-amber-800 dark:text-amber-200">{validationErrors.ita_required}</p>
+                  </div>
+                )}
 
                 <div className="space-y-3 md:space-y-4">
                   {steps.map((step, index) => (
-                    <Card key={index}>
-                      <CardContent className="p-3 md:p-4">
-                        <div className="grid grid-cols-1 md:grid-cols-2 gap-3 md:gap-4">
-                          <div>
-                            <Label>Step Type *</Label>
-                            <Select
-                              required
-                              value={step.stepType}
-                              onValueChange={(value) => updateStep(index, "stepType", value)}
-                            >
-                              <SelectTrigger>
-                                <SelectValue placeholder="Select step" />
-                              </SelectTrigger>
-                              <SelectContent>
-                                {stepOptions.map((option) => (
-                                  <SelectItem key={option.value} value={option.value}>
-                                    {option.label}
-                                  </SelectItem>
-                                ))}
-                              </SelectContent>
-                            </Select>
+                    <div key={index} className="space-y-3">
+                      <Card>
+                        <CardContent className="p-3 md:p-4">
+                          <div className="grid grid-cols-1 md:grid-cols-2 gap-3 md:gap-4">
+                            <div>
+                              <Label>Step Type *</Label>
+                              <Select
+                                required
+                                value={step.stepType}
+                                onValueChange={(value) => updateStep(index, "stepType", value)}
+                              >
+                                <SelectTrigger>
+                                  <SelectValue placeholder="Select step" />
+                                </SelectTrigger>
+                                <SelectContent>
+                                  {getAvailableStepOptions(steps, index).map((option) => (
+                                    <SelectItem key={option.value} value={option.value}>
+                                      {option.label}
+                                    </SelectItem>
+                                  ))}
+                                </SelectContent>
+                              </Select>
+                              {index === 0 && !steps.some(s => s.stepType === "ITA") && (
+                                <p className="text-xs text-blue-600 dark:text-blue-400 mt-1">
+                                  💡 Start with ITA (Invitation to Apply) - it's required for processing time calculations
+                                </p>
+                              )}
+                              {index > 0 && !steps.some(s => s.stepType === "ITA") && (
+                                <p className="text-xs text-amber-600 dark:text-amber-400 mt-1">
+                                  ⚠️ ITA step is required first for logical step ordering
+                                </p>
+                              )}
+                            </div>
+
+                            <div>
+                              <Label>Completion Date *</Label>
+                              <Input
+                                type="date"
+                                required
+                                value={step.completedAt}
+                                onChange={(e) => updateStep(index, "completedAt", e.target.value)}
+                                className={validationErrors[`step_${index}_date`] ? 'border-red-500 focus:border-red-500' : ''}
+                              />
+                              {validationErrors[`step_${index}_date`] && (
+                                <p className="text-xs text-red-500 mt-1">{validationErrors[`step_${index}_date`]}</p>
+                              )}
+                            </div>
                           </div>
 
-                          <div>
-                            <Label>Completion Date</Label>
-                            <Input
-                              type="date"
-                              value={step.completedAt}
-                              onChange={(e) => updateStep(index, "completedAt", e.target.value)}
+                          <div className="mt-3 md:mt-4 md:col-span-2">
+                            <Label>Comment (Optional)</Label>
+                            <Textarea
+                              value={step.comment}
+                              onChange={(e) => updateStep(index, "comment", e.target.value)}
+                              placeholder="Share any details about this step..."
+                              className="min-h-[80px] md:min-h-[100px]"
                             />
                           </div>
-                        </div>
 
-                        <div className="mt-3 md:mt-4 md:col-span-2">
-                          <Label>Comment (Optional)</Label>
-                          <Textarea
-                            value={step.comment}
-                            onChange={(e) => updateStep(index, "comment", e.target.value)}
-                            placeholder="Share any details about this step..."
-                            className="min-h-[80px] md:min-h-[100px]"
-                          />
-                        </div>
-
-                        {steps.length > 1 && (
-                          <div className="flex justify-end mt-3 md:mt-4 md:col-span-2">
+                          <div className="flex justify-between mt-3 md:mt-4 md:col-span-2">
                             <Button
                               type="button"
                               variant="outline"
                               size="sm"
-                              onClick={() => removeStep(index)}
+                              onClick={() => addStep(index)}
                               className="h-9 md:h-10"
                             >
-                              <Trash2 className="h-4 w-4 mr-2" />
-                              Remove
+                              <Plus className="h-4 w-4 mr-2" />
+                              Add Step After
                             </Button>
+                            {steps.length > 1 && (
+                              <Button
+                                type="button"
+                                variant="outline"
+                                size="sm"
+                                onClick={() => removeStep(index)}
+                                className="h-9 md:h-10 text-red-600 hover:text-red-700 hover:bg-red-50 dark:hover:bg-red-950"
+                              >
+                                <Trash2 className="h-4 w-4 mr-2" />
+                                Remove
+                              </Button>
+                            )}
                           </div>
-                        )}
-                      </CardContent>
-                    </Card>
+                        </CardContent>
+                      </Card>
+                    </div>
                   ))}
+                  
+                  {/* Sticky bottom Add Step button */}
+                  <div className="sticky bottom-4 flex justify-center pt-4">
+                    <Button
+                      type="button"
+                      onClick={() => addStep()}
+                      className="shadow-lg bg-primary hover:bg-primary/90 h-12 px-6"
+                    >
+                      <Plus className="h-4 w-4 mr-2" />
+                      Add New Step
+                    </Button>
+                  </div>
                 </div>
               </div>
+
+              {validationErrors.submit && (
+                <div className="bg-red-50 dark:bg-red-950 border border-red-200 dark:border-red-800 rounded-lg p-3">
+                  <p className="text-sm text-red-800 dark:text-red-200">{validationErrors.submit}</p>
+                </div>
+              )}
 
               <div className="flex flex-col sm:flex-row gap-3 sm:gap-4">
                 <Button type="submit" disabled={loading} className="h-11 md:h-10 order-1 sm:order-1">

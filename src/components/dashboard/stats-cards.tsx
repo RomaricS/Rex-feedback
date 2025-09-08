@@ -27,7 +27,7 @@ export function StatsCards() {
 
   if (loading) {
     return (
-      <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-4">
+      <div className="grid gap-3 md:gap-4 grid-cols-2 lg:grid-cols-4">
         {Array.from({ length: 4 }).map((_, index) => (
           <Card key={index}>
             <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
@@ -76,23 +76,23 @@ export function StatsCards() {
   ]
 
   return (
-    <div className="grid gap-4">
+    <div className="grid gap-3 md:gap-4 grid-cols-2 lg:grid-cols-4">
       {statsData.map((stat, index) => (
         <div key={index} className="stats-card hover-lift transition-smooth group cursor-pointer">
-          <div className="p-6">
-            <div className="flex items-center justify-between mb-4">
-              <h3 className="text-sm font-semibold text-muted-foreground uppercase tracking-wide group-hover:text-foreground transition-colors">
+          <div className="p-4 md:p-6">
+            <div className="flex items-center justify-between mb-3 md:mb-4">
+              <h3 className="text-xs md:text-sm font-semibold text-muted-foreground uppercase tracking-wide group-hover:text-foreground transition-colors">
                 {stat.title}
               </h3>
-              <div className="p-3 bg-primary/10 rounded-xl group-hover:bg-primary/15 transition-colors">
-                <stat.icon className="h-5 w-5 text-primary" />
+              <div className="p-2 md:p-3 bg-primary/10 rounded-xl group-hover:bg-primary/15 transition-colors">
+                <stat.icon className="h-4 w-4 md:h-5 md:w-5 text-primary" />
               </div>
             </div>
-            <div className="space-y-3">
-              <div className="text-3xl font-bold text-foreground leading-none group-hover:text-primary transition-colors">
+            <div className="space-y-2 md:space-y-3">
+              <div className="text-xl md:text-3xl font-bold text-foreground leading-none group-hover:text-primary transition-colors">
                 {stat.value}
               </div>
-              <p className="text-sm font-medium">
+              <p className="text-xs md:text-sm font-medium">
                 <span className={
                   stat.changeType === "positive" ? "text-emerald-600 dark:text-emerald-400" : 
                   stat.changeType === "negative" ? "text-red-600 dark:text-red-400" : 
@@ -101,7 +101,7 @@ export function StatsCards() {
                   {stat.change}
                 </span>
                 {stat.changeType !== "neutral" && (
-                  <span className="text-muted-foreground ml-1">from last month</span>
+                  <span className="text-muted-foreground ml-1 hidden sm:inline">from last month</span>
                 )}
               </p>
             </div>

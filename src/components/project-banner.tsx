@@ -15,7 +15,7 @@ export function ProjectBanner() {
         <div className="space-y-1.5 md:space-y-2 text-xs md:text-sm leading-relaxed">
           <div className="flex items-start gap-2">
             <Shield className="h-3 w-3 md:h-4 md:w-4 mt-0.5 text-green-600 flex-shrink-0" />
-            <span>Your data stays secure - we don't collect, sell, or misuse your information</span>
+            <span>Your data stays secure - we don&apos;t collect, sell, or misuse your information</span>
           </div>
           
           <div className="flex items-start gap-2">
