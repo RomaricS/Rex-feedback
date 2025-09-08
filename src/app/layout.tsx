@@ -14,7 +14,7 @@ const geistMono = Geist_Mono({
 });
 
 export const metadata: Metadata = {
-  title: "IRCC Feedback Dashboard",
+  title: "Feedback Dashboard",
   description: "Community feedback dashboard for Canadian immigration processes",
 };
 
