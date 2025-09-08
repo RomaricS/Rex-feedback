@@ -10,7 +10,7 @@ export default function DashboardPage() {
       <div className="space-y-8">
       <div className="relative overflow-hidden">
         <div className="bg-canadian-gradient p-10 rounded-3xl premium-card shadow-premium transition-smooth">
-          <div className="relative flex gap-8 z-10">
+          <div className="relative flex flex-col md:flex-row gap-8 z-10">
             <div className="flex-1"><StatusDistributionChart /></div>
             <div className="flex-1"><ProcessingTimeChart /></div>
           </div>

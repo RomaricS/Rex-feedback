@@ -228,14 +228,13 @@ export function FeedbackTable({}: FeedbackTableProps) {
                   <TableHead>Type</TableHead>
                   <TableHead>Current Step</TableHead>
                   <TableHead>Processing Time</TableHead>
-                  <TableHead>Submitted</TableHead>
                   <TableHead>Actions</TableHead>
                 </TableRow>
               </TableHeader>
               <TableBody>
                 {feedbacks.length === 0 ? (
                   <TableRow>
-                    <TableCell colSpan={8} className="text-center py-8 text-muted-foreground">
+                    <TableCell colSpan={7} className="text-center py-8 text-muted-foreground">
                       No feedbacks found
                     </TableCell>
                   </TableRow>
@@ -267,7 +266,6 @@ export function FeedbackTable({}: FeedbackTableProps) {
                           </Badge>
                         </TableCell>
                         <TableCell>{processingTime}</TableCell>
-                        <TableCell>{format(feedback.createdAt, "MMM d, yyyy")}</TableCell>
                         <TableCell>
                           <div className="flex items-center gap-1">
                             <Button variant="ghost" size="sm" asChild>
@@ -380,9 +378,6 @@ export function FeedbackTable({}: FeedbackTableProps) {
                             </div>
                           </div>
                           
-                          <div className="text-xs text-muted-foreground">
-                            Submitted: {format(feedback.createdAt, "MMM d, yyyy")}
-                          </div>
                         </div>
                       </div>
                     </div>
