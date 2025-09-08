@@ -347,89 +347,88 @@ export function FeedbackTable({}: FeedbackTableProps) {
             </Table>
             </div>
 
-            {/* Mobile Card View */}
-            <div className="md:hidden space-y-4">
-              {feedbacks.length === 0 ? (
-                <div className="text-center py-8 text-muted-foreground">
-                  No feedbacks found
-                </div>
-              ) : (
-                feedbacks.map((feedback) => {
-                  const currentStep = getCurrentStep(feedback.steps)
-                  const processingTime = calculateProcessingTime(feedback)
-                  
-                  return (
-                    <div key={feedback.id} className="stats-card hover-lift group">
-                      <div className="p-6 space-y-4">
-                        <div className="flex justify-between items-start gap-2">
-                          <h3 className="font-medium text-sm leading-tight flex-1">
+            {/* Mobile Table View */}
+            <div className="md:hidden overflow-x-auto">
+              <Table>
+                <TableHeader>
+                  <TableRow>
+                    <TableHead className="min-w-[200px]">Title</TableHead>
+                    <TableHead className="min-w-[150px]">Program</TableHead>
+                    <TableHead className="min-w-[100px]">Country</TableHead>
+                    <TableHead className="min-w-[80px]">Type</TableHead>
+                    <TableHead className="min-w-[120px]">Current Step</TableHead>
+                    <TableHead className="min-w-[120px]">Processing Time</TableHead>
+                    <TableHead className="min-w-[100px]">Actions</TableHead>
+                  </TableRow>
+                </TableHeader>
+                <TableBody>
+                  {feedbacks.length === 0 ? (
+                    <TableRow>
+                      <TableCell colSpan={7} className="text-center py-8 text-muted-foreground">
+                        No feedbacks found
+                      </TableCell>
+                    </TableRow>
+                  ) : (
+                    feedbacks.map((feedback) => {
+                      const currentStep = getCurrentStep(feedback.steps)
+                      const processingTime = calculateProcessingTime(feedback)
+                      
+                      return (
+                        <TableRow key={feedback.id}>
+                          <TableCell className="font-medium">
                             {feedback.title}
-                          </h3>
-                          <div className="flex gap-1 flex-shrink-0">
-                            <Button variant="ghost" size="sm" className="h-8 w-8 p-0" asChild>
-                              <Link href={`/feedback/${feedback.id}`}>
-                                <Eye className="h-4 w-4" />
-                              </Link>
-                            </Button>
-                            {user && feedback.userId === user.uid && feedback.userId !== 'anonymous' && (
-                              <>
-                                <Button variant="ghost" size="sm" className="h-8 w-8 p-0" asChild>
-                                  <Link href={`/feedback/edit/${feedback.id}`}>
-                                    <Edit className="h-4 w-4" />
-                                  </Link>
-                                </Button>
-                                <Button 
-                                  variant="ghost" 
-                                  size="sm" 
-                                  className="h-8 w-8 p-0 text-red-600 hover:text-red-700 hover:bg-red-50 dark:hover:bg-red-950"
-                                  onClick={() => handleDelete(feedback.id!, feedback.title)}
-                                  disabled={deletingId === feedback.id}
-                                >
-                                  <Trash2 className="h-4 w-4" />
-                                </Button>
-                              </>
-                            )}
-                          </div>
-                        </div>
-                        
-                        <div className="space-y-2">
-                          <div className="flex flex-wrap gap-2">
-                            <Badge variant="outline" className="text-xs">
-                              {feedback.program.length > 30 
-                                ? feedback.program.substring(0, 30) + '...' 
-                                : feedback.program
-                              }
+                          </TableCell>
+                          <TableCell>
+                            <Badge variant="outline">{feedback.program}</Badge>
+                          </TableCell>
+                          <TableCell>{feedback.country || "N/A"}</TableCell>
+                          <TableCell>
+                            <Badge variant={feedback.applicationType === 'inland' ? 'default' : 'secondary'}>
+                              {feedback.applicationType === 'inland' ? 'Inland' : 
+                               feedback.applicationType === 'outland' ? 'Outland' : 'N/A'}
                             </Badge>
+                          </TableCell>
+                          <TableCell>
                             <Badge 
-                              className={`text-xs ${stepColors[currentStep] || "bg-gray-100 text-gray-800"}`}
+                              className={stepColors[currentStep] || "bg-gray-100 text-gray-800"}
                             >
                               {currentStep}
                             </Badge>
-                            {feedback.applicationType && (
-                              <Badge 
-                                variant={feedback.applicationType === 'inland' ? 'default' : 'secondary'}
-                                className="text-xs"
-                              >
-                                {feedback.applicationType === 'inland' ? 'Inland' : 'Outland'}
-                              </Badge>
-                            )}
-                          </div>
-                          
-                          <div className="grid grid-cols-2 gap-4 text-sm text-muted-foreground">
-                            <div>
-                              <span className="font-medium">Country:</span> {feedback.country || "N/A"}
+                          </TableCell>
+                          <TableCell>{processingTime}</TableCell>
+                          <TableCell>
+                            <div className="flex items-center gap-1">
+                              <Button variant="ghost" size="sm" asChild>
+                                <Link href={`/feedback/${feedback.id}`}>
+                                  <Eye className="h-4 w-4" />
+                                </Link>
+                              </Button>
+                              {user && feedback.userId === user.uid && feedback.userId !== 'anonymous' && (
+                                <>
+                                  <Button variant="ghost" size="sm" asChild>
+                                    <Link href={`/feedback/edit/${feedback.id}`}>
+                                      <Edit className="h-4 w-4" />
+                                    </Link>
+                                  </Button>
+                                  <Button 
+                                    variant="ghost" 
+                                    size="sm" 
+                                    onClick={() => handleDelete(feedback.id!, feedback.title)}
+                                    disabled={deletingId === feedback.id}
+                                    className="text-red-600 hover:text-red-700 hover:bg-red-50 dark:hover:bg-red-950"
+                                  >
+                                    <Trash2 className="h-4 w-4" />
+                                  </Button>
+                                </>
+                              )}
                             </div>
-                            <div>
-                              <span className="font-medium">Processing:</span> {processingTime}
-                            </div>
-                          </div>
-                          
-                        </div>
-                      </div>
-                    </div>
-                  )
-                })
-              )}
+                          </TableCell>
+                        </TableRow>
+                      )
+                    })
+                  )}
+                </TableBody>
+              </Table>
             </div>
 
             <div className="flex items-center justify-between space-x-2 py-4">
