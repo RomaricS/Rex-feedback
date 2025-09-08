@@ -301,35 +301,69 @@ export function Header({
                       </SelectContent>
                     </Select>
                   </div>
+                  
+                  <div className="border-t pt-3 mt-4">
+                    <h4 className="font-medium mb-3">Settings</h4>
+                    <div className="space-y-3">
+                      <div className="flex items-center justify-between">
+                        <span className="text-sm">Language</span>
+                        <div className="flex gap-2">
+                          <Button
+                            variant={locale === 'en' ? 'default' : 'outline'}
+                            size="sm"
+                            onClick={() => switchLanguage('en')}
+                            className="h-8 px-2 text-xs"
+                          >
+                            🇬🇧 EN
+                          </Button>
+                          <Button
+                            variant={locale === 'fr' ? 'default' : 'outline'}
+                            size="sm"
+                            onClick={() => switchLanguage('fr')}
+                            className="h-8 px-2 text-xs"
+                          >
+                            🇫🇷 FR
+                          </Button>
+                        </div>
+                      </div>
+                      
+                      <div className="flex items-center justify-between">
+                        <span className="text-sm">Theme</span>
+                        <ThemeToggle />
+                      </div>
+                    </div>
+                  </div>
                 </div>
               </PopoverContent>
             </Popover>
           </div>
 
-          {/* Language Switcher */}
-          <DropdownMenu>
-            <DropdownMenuTrigger asChild>
-              <Button variant="ghost" size="sm" className="h-8 w-8 p-0">
-                <Languages className="h-4 w-4" />
-                <span className="sr-only">Switch language</span>
-              </Button>
-            </DropdownMenuTrigger>
-            <DropdownMenuContent align="end">
-              <DropdownMenuItem 
-                onClick={() => switchLanguage('en')}
-                className={locale === 'en' ? 'bg-accent' : ''}
-              >
-                🇬🇧 English
-              </DropdownMenuItem>
-              <DropdownMenuItem 
-                onClick={() => switchLanguage('fr')}
-                className={locale === 'fr' ? 'bg-accent' : ''}
-              >
-                🇫🇷 Français
-              </DropdownMenuItem>
-            </DropdownMenuContent>
-          </DropdownMenu>
-          <ThemeToggle />
+          {/* Desktop Language & Theme Switchers */}
+          <div className="hidden md:flex items-center space-x-2">
+            <DropdownMenu>
+              <DropdownMenuTrigger asChild>
+                <Button variant="ghost" size="sm" className="h-8 w-8 p-0">
+                  <Languages className="h-4 w-4" />
+                  <span className="sr-only">Switch language</span>
+                </Button>
+              </DropdownMenuTrigger>
+              <DropdownMenuContent align="end">
+                <DropdownMenuItem 
+                  onClick={() => switchLanguage('en')}
+                  className={locale === 'en' ? 'bg-accent' : ''}
+                >
+                  🇬🇧 English
+                </DropdownMenuItem>
+                <DropdownMenuItem 
+                  onClick={() => switchLanguage('fr')}
+                  className={locale === 'fr' ? 'bg-accent' : ''}
+                >
+                  🇫🇷 Français
+                </DropdownMenuItem>
+              </DropdownMenuContent>
+            </DropdownMenu>
+            <ThemeToggle />
+          </div>
           {loading ? (
             <div className="h-8 w-8 bg-muted animate-pulse rounded-full" />
           ) : user ? (
@@ -359,11 +393,13 @@ export function Header({
             </DropdownMenu>
           ) : (
             <div className="flex items-center space-x-1 md:space-x-2">
-              <Button variant="ghost" size="sm" onClick={handleGoogleSignIn} className="text-xs md:text-sm">
-                {t('signInWithGoogle')}
+              <Button variant="ghost" size="sm" onClick={handleGoogleSignIn} className="text-xs md:text-sm px-2 md:px-3">
+                <span className="hidden sm:inline">{t('signInWithGoogle')}</span>
+                <span className="sm:hidden">Google</span>
               </Button>
-              <Button variant="secondary" size="sm" onClick={handleFacebookSignIn} className="text-xs md:text-sm">
-                {t('signInWithFacebook')}
+              <Button variant="secondary" size="sm" onClick={handleFacebookSignIn} className="text-xs md:text-sm px-2 md:px-3">
+                <span className="hidden sm:inline">{t('signInWithFacebook')}</span>
+                <span className="sm:hidden">Facebook</span>
               </Button>
             </div>
           )}
