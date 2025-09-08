@@ -401,7 +401,7 @@ export default function NewFeedbackPage() {
                               </Select>
                               {index === 0 && !steps.some(s => s.stepType === "ITA") && (
                                 <p className="text-xs text-blue-600 dark:text-blue-400 mt-1">
-                                  💡 Start with ITA (Invitation to Apply) - it's required for processing time calculations
+                                  💡 Start with ITA (Invitation to Apply) - it&apos;s required for processing time calculations
                                 </p>
                               )}
                               {index > 0 && !steps.some(s => s.stepType === "ITA") && (
