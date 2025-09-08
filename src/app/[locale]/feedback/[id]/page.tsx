@@ -160,10 +160,7 @@ export default function FeedbackDetailPage() {
           {user && feedback.userId === user.uid && (
             <div className="flex gap-2">
               <Button variant="outline" size="sm" asChild>
-                <Link href={{
-                  pathname: '/feedback/edit/[id]',
-                  params: { id: feedback.id! }
-                }}>
+                <Link href={`/feedback/edit/${feedback.id}`}>
                   <Edit className="h-4 w-4 mr-2" />
                   Edit
                 </Link>

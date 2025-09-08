@@ -20,18 +20,10 @@ const statusColors = [
 ]
 
 const RADIAN = Math.PI / 180
-type LabelProps = {
-  cx: number;
-  cy: number;
-  midAngle: number;
-  innerRadius: number;
-  outerRadius: number;
-  percent: number;
-  index: number;
-}
 const renderCustomizedLabel = ({
   cx, cy, midAngle, innerRadius, outerRadius, percent
-}: LabelProps) => {
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+}: any) => {
   const radius = innerRadius + (outerRadius - innerRadius) * 0.5
   const x = cx + radius * Math.cos(-midAngle * RADIAN)
   const y = cy + radius * Math.sin(-midAngle * RADIAN)

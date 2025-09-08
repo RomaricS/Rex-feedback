@@ -18,6 +18,7 @@ import { feedbackService, Feedback } from "@/lib/feedback-service"
 import { exportService } from "@/lib/export-service"
 import { useAuth } from "@/contexts/auth-context"
 import { useSearch } from "@/contexts/search-context"
+import { DocumentData, DocumentSnapshot } from "firebase/firestore"
 
 
 const stepColors: Record<string, string> = {
@@ -67,6 +68,7 @@ function calculateProcessingTime(feedback: Feedback): string {
   return diffMonths > 0 ? `${diffMonths} months` : "Less than 1 month"
 }
 
+// eslint-disable-next-line @typescript-eslint/no-empty-object-type
 interface FeedbackTableProps {}
 
 export function FeedbackTable({}: FeedbackTableProps) {
@@ -76,7 +78,7 @@ export function FeedbackTable({}: FeedbackTableProps) {
   const [loading, setLoading] = useState(true)
   const [page, setPage] = useState(1)
   const [hasMore, setHasMore] = useState(false)
-  const [lastDoc, setLastDoc] = useState(null)
+  const [lastDoc, setLastDoc] = useState<DocumentSnapshot<DocumentData, DocumentData>>()
   const [error, setError] = useState<string | null>(null)
   const [deletingId, setDeletingId] = useState<string | null>(null)
   const [userFeedbacks, setUserFeedbacks] = useState<Feedback[]>([])
@@ -110,7 +112,7 @@ export function FeedbackTable({}: FeedbackTableProps) {
         { 
           page: currentPage, 
           limit: 10,
-          lastDoc: currentPage > 1 ? currentLastDoc : undefined
+          lastDoc: currentPage > 1 ? currentLastDoc || undefined : undefined
         }
       )
       
@@ -127,7 +129,7 @@ export function FeedbackTable({}: FeedbackTableProps) {
       
       setFeedbacks(filteredFeedbacks)
       setHasMore(result.hasMore)
-      setLastDoc(result.lastDoc)
+      setLastDoc(result.lastDoc || undefined)
       
       // Store user's own feedbacks for export
       if (user) {
@@ -167,7 +169,7 @@ export function FeedbackTable({}: FeedbackTableProps) {
   const handlePreviousPage = () => {
     if (page > 1 && !loadingRef.current) {
       setPage(prev => prev - 1)
-      setLastDoc(null) // Reset lastDoc for previous page
+      setLastDoc(undefined) // Reset lastDoc for previous page
     }
   }
 

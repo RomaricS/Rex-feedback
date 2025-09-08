@@ -6,28 +6,7 @@ export const routing = defineRouting({
   locales: ['en', 'fr'],
  
   // Used when no locale matches
-  defaultLocale: 'en',
-  
-  // Prefix strategy
-  pathnames: {
-    '/': '/',
-    '/dashboard': {
-      en: '/dashboard',
-      fr: '/tableau-de-bord'
-    },
-    '/feedback/new': {
-      en: '/feedback/new',
-      fr: '/commentaires/nouveau'
-    },
-    '/feedback/edit/[id]': {
-      en: '/feedback/edit/[id]',
-      fr: '/commentaires/modifier/[id]'
-    },
-    '/feedback/[id]': {
-      en: '/feedback/[id]',
-      fr: '/commentaires/[id]'
-    }
-  }
+  defaultLocale: 'en'
 });
  
 // Lightweight wrappers around Next.js' navigation APIs
