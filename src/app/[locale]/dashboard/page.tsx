@@ -7,10 +7,10 @@ import { StatusDistributionChart } from "@/components/dashboard/status-distribut
 
 export default function DashboardPage() {
   return (
-      <div className="space-y-8">
+      <div className="space-y-6 md:space-y-8">
       <div className="relative overflow-hidden">
-        <div className="bg-canadian-gradient p-10 rounded-3xl premium-card shadow-premium transition-smooth">
-          <div className="relative flex flex-col md:flex-row gap-8 z-10">
+        <div className="bg-canadian-gradient p-4 md:p-10 rounded-3xl premium-card shadow-premium transition-smooth">
+          <div className="relative flex flex-col md:flex-row gap-4 md:gap-8 z-10">
             <div className="flex-1"><StatusDistributionChart /></div>
             <div className="flex-1"><ProcessingTimeChart /></div>
           </div>
@@ -18,7 +18,7 @@ export default function DashboardPage() {
       </div>
 
       {/* Main Content Layout - Feedback Priority */}
-      <div className="grid grid-cols-1 xl:grid-cols-4 gap-8">
+      <div className="grid grid-cols-1 xl:grid-cols-4 gap-6 md:gap-8">
         {/* Main Content - Feedback (Priority) */}
         <div className="xl:col-span-3">
           <FeedbackTable />

@@ -11,10 +11,11 @@ import {
 } from "@/components/ui/table"
 import { Badge } from "@/components/ui/badge"
 import { Button } from "@/components/ui/button"
-import { Eye, ChevronLeft, ChevronRight, Edit, Trash2 } from "lucide-react"
+import { Eye, ChevronLeft, ChevronRight, Edit, Trash2, Download } from "lucide-react"
 import { format } from "date-fns"
 import {Link} from "../../../i18n/routing"
 import { feedbackService, Feedback } from "@/lib/feedback-service"
+import { exportService } from "@/lib/export-service"
 import { useAuth } from "@/contexts/auth-context"
 import { useSearch } from "@/contexts/search-context"
 
@@ -76,6 +77,7 @@ export function FeedbackTable({}: FeedbackTableProps) {
   const [lastDoc, setLastDoc] = useState(null)
   const [error, setError] = useState<string | null>(null)
   const [deletingId, setDeletingId] = useState<string | null>(null)
+  const [userFeedbacks, setUserFeedbacks] = useState<Feedback[]>([])
   
   // Use ref to track the current filters to avoid infinite loops
   const filtersRef = useRef(filters)
@@ -124,6 +126,12 @@ export function FeedbackTable({}: FeedbackTableProps) {
       setFeedbacks(filteredFeedbacks)
       setHasMore(result.hasMore)
       setLastDoc(result.lastDoc)
+      
+      // Store user's own feedbacks for export
+      if (user) {
+        const userOwnFeedbacks = filteredFeedbacks.filter(f => f.userId === user.uid)
+        setUserFeedbacks(userOwnFeedbacks)
+      }
       
       if (resetPage) {
         setPage(1)
@@ -187,24 +195,58 @@ export function FeedbackTable({}: FeedbackTableProps) {
     }
   }
 
+  const handleExportCSV = () => {
+    if (!user) return
+    exportService.exportToCSV(userFeedbacks)
+  }
+
+  const handleExportPDF = () => {
+    if (!user) return
+    exportService.exportToPDF(userFeedbacks)
+  }
+
   return (
     <div className="premium-card hover-lift transition-smooth">
-      <div className="p-8">
-        <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4 mb-8">
-          <div className="flex items-center gap-4">
-            <div className="p-4 bg-primary/10 rounded-2xl">
-              <span className="text-2xl">💬</span>
+      <div className="p-4 md:p-8">
+        <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3 md:gap-4 mb-6 md:mb-8">
+          <div className="flex items-center gap-3 md:gap-4">
+            <div className="p-3 md:p-4 bg-primary/10 rounded-2xl">
+              <span className="text-xl md:text-2xl">💬</span>
             </div>
             <div>
-              <h2 className="text-2xl font-bold text-foreground">Community Feedbacks</h2>
-              <p className="text-muted-foreground font-medium">Real experiences from the community</p>
+              <h2 className="text-xl md:text-2xl font-bold text-foreground">Community Feedbacks</h2>
+              <p className="text-sm md:text-base text-muted-foreground font-medium">Real experiences from the community</p>
             </div>
           </div>
-          {user && (
-            <Button asChild className="bg-primary hover:bg-primary/90 shadow-lg">
-              <Link href="/feedback/new">Add Your Feedback</Link>
+          <div className="flex flex-col sm:flex-row gap-2 md:gap-3">
+            {user && userFeedbacks.length > 0 && (
+              <div className="flex gap-2 order-2 sm:order-1">
+                <Button 
+                  variant="outline" 
+                  size="sm"
+                  onClick={handleExportCSV}
+                  className="shadow-sm flex-1 sm:flex-none h-9 md:h-8"
+                >
+                  <Download className="h-4 w-4 mr-1 md:mr-2" />
+                  <span className="text-xs md:text-sm">CSV</span>
+                </Button>
+                <Button 
+                  variant="outline" 
+                  size="sm"
+                  onClick={handleExportPDF}
+                  className="shadow-sm flex-1 sm:flex-none h-9 md:h-8"
+                >
+                  <Download className="h-4 w-4 mr-1 md:mr-2" />
+                  <span className="text-xs md:text-sm">PDF</span>
+                </Button>
+              </div>
+            )}
+            <Button asChild className="bg-primary hover:bg-primary/90 shadow-lg order-1 sm:order-2 h-9 md:h-10">
+              <Link href="/feedback/new">
+                <span className="text-sm md:text-base">Add Your Feedback</span>
+              </Link>
             </Button>
-          )}
+          </div>
         </div>
         <div>
         {loading ? (
@@ -273,7 +315,7 @@ export function FeedbackTable({}: FeedbackTableProps) {
                                 <Eye className="h-4 w-4" />
                               </Link>
                             </Button>
-                            {user && feedback.userId === user.uid && (
+                            {user && feedback.userId === user.uid && feedback.userId !== 'anonymous' && (
                               <>
                                 <Button variant="ghost" size="sm" asChild>
                                   <Link href={`/feedback/edit/${feedback.id}`}>
@@ -325,7 +367,7 @@ export function FeedbackTable({}: FeedbackTableProps) {
                                 <Eye className="h-4 w-4" />
                               </Link>
                             </Button>
-                            {user && feedback.userId === user.uid && (
+                            {user && feedback.userId === user.uid && feedback.userId !== 'anonymous' && (
                               <>
                                 <Button variant="ghost" size="sm" className="h-8 w-8 p-0" asChild>
                                   <Link href={`/feedback/edit/${feedback.id}`}>

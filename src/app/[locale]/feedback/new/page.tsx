@@ -9,6 +9,7 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
 import { Textarea } from "@/components/ui/textarea"
+import { Checkbox } from "@/components/ui/checkbox"
 import {
   Select,
   SelectContent,
@@ -16,7 +17,8 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select"
-import { ArrowLeft, Plus, Trash2 } from "lucide-react"
+import { ArrowLeft, Plus, Trash2, Info } from "lucide-react"
+import { ProjectBanner } from "@/components/project-banner"
 
 const programs = [
   "Express Entry - General",
@@ -71,6 +73,7 @@ export default function NewFeedbackPage() {
   const { user } = useAuth()
   const router = useRouter()
   const [loading, setLoading] = useState(false)
+  const [isAnonymous, setIsAnonymous] = useState(false)
   
   const [formData, setFormData] = useState({
     title: "",
@@ -108,15 +111,13 @@ export default function NewFeedbackPage() {
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
-    if (!user) {
-      alert("Please sign in to submit feedback")
+    if (!user && !isAnonymous) {
+      alert("Please sign in or submit anonymously")
       return
     }
 
     setLoading(true)
     try {
-      // Users can create multiple feedbacks now
-
       const filteredSteps = steps.filter(step => step.stepType && step.stepName)
         .map(step => ({
           ...step,
@@ -128,10 +129,10 @@ export default function NewFeedbackPage() {
         country: formData.country || undefined,
         program: formData.program,
         applicationType: formData.applicationType,
-        userId: user.uid,
+        userId: user?.uid || 'anonymous',
         steps: filteredSteps,
         isActive: true
-      })
+      }, isAnonymous)
 
       router.push("/dashboard")
     } catch (error) {
@@ -142,48 +143,54 @@ export default function NewFeedbackPage() {
     }
   }
 
-  if (!user) {
-    return (
-      <div className="container mx-auto px-4 py-8">
-        <Card className="max-w-md mx-auto">
-          <CardHeader>
-            <CardTitle>Authentication Required</CardTitle>
-          </CardHeader>
-          <CardContent>
-            <p className="text-muted-foreground mb-4">
-              Please sign in to submit your feedback.
-            </p>
-            <Button asChild>
-              <Link href="/dashboard">Back to Dashboard</Link>
-            </Button>
-          </CardContent>
-        </Card>
-      </div>
-    )
-  }
 
   return (
-    <div className="container mx-auto px-4 py-8">
+    <div className="container mx-auto px-4 py-4 md:py-8">
       <div className="max-w-2xl mx-auto">
-        <div className="flex items-center gap-4 mb-6">
-          <Button variant="ghost" size="sm" asChild>
+        <ProjectBanner />
+        <div className="flex items-center gap-2 md:gap-4 mb-4 md:mb-6">
+          <Button variant="ghost" size="sm" asChild className="h-10 md:h-9">
             <Link href="/dashboard">
               <ArrowLeft className="h-4 w-4" />
-              Back to Dashboard
+              <span className="hidden sm:inline ml-2">Back to Dashboard</span>
+              <span className="sm:hidden ml-2">Back</span>
             </Link>
           </Button>
         </div>
 
         <Card>
-          <CardHeader>
-            <CardTitle>Add Your Immigration Feedback</CardTitle>
-            <p className="text-muted-foreground">
+          <CardHeader className="px-4 md:px-6">
+            <CardTitle className="text-xl md:text-2xl">Add Your Immigration Feedback</CardTitle>
+            <p className="text-muted-foreground text-sm md:text-base">
               Share your immigration journey to help others in the community
             </p>
+            {!user && (
+              <div className="bg-blue-50 dark:bg-blue-950 border border-blue-200 dark:border-blue-800 rounded-lg p-3 md:p-4">
+                <div className="flex items-start gap-2 md:gap-3">
+                  <Info className="h-4 w-4 md:h-5 md:w-5 text-blue-600 dark:text-blue-400 mt-0.5 flex-shrink-0" />
+                  <div className="space-y-2 md:space-y-3">
+                    <p className="text-xs md:text-sm text-blue-800 dark:text-blue-200">
+                      You can submit feedback anonymously or sign in to manage your submissions later. Check this box to submit anonymously.
+                    </p>
+                    <div className="flex items-center space-x-2">
+                      <Checkbox 
+                        id="anonymous"
+                        className="border-blue-600 dark:border-blue-400 checked:bg-blue-600 dark:checked:bg-blue-400 focus:ring-blue-500"
+                        checked={isAnonymous}
+                        onCheckedChange={(checked) => setIsAnonymous(checked as boolean)}
+                      />
+                      <Label htmlFor="anonymous" className="text-xs md:text-sm font-medium text-blue-800 dark:text-blue-200">
+                        Submit anonymously
+                      </Label>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            )}
           </CardHeader>
-          <CardContent>
-            <form onSubmit={handleSubmit} className="space-y-6">
-              <div className="space-y-4">
+          <CardContent className="px-4 md:px-6 pb-4 md:pb-6">
+            <form onSubmit={handleSubmit} className="space-y-4 md:space-y-6">
+              <div className="space-y-3 md:space-y-4">
                 <div>
                   <div className="flex justify-between items-center mb-2">
                     <Label htmlFor="title">Title *</Label>
@@ -203,11 +210,11 @@ export default function NewFeedbackPage() {
                     maxLength={100}
                     value={formData.title}
                     onChange={(e) => setFormData({ ...formData, title: e.target.value })}
-                    placeholder="e.g., Express Entry - Software Engineer from India"
+                    placeholder="e.g., James - CRS 520"
                     className={formData.title.length > 100 ? 'border-red-500 focus:border-red-500' : ''}
                   />
                   <p className="text-xs text-muted-foreground mt-1">
-                    Keep it concise and descriptive for better visibility
+                    Keep it short and descriptive
                   </p>
                 </div>
 
@@ -268,11 +275,11 @@ export default function NewFeedbackPage() {
                   </Button>
                 </div>
 
-                <div className="space-y-4">
+                <div className="space-y-3 md:space-y-4">
                   {steps.map((step, index) => (
                     <Card key={index}>
-                      <CardContent className="pt-4">
-                        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                      <CardContent className="p-3 md:p-4">
+                        <div className="grid grid-cols-1 md:grid-cols-2 gap-3 md:gap-4">
                           <div>
                             <Label>Step Type *</Label>
                             <Select
@@ -303,22 +310,24 @@ export default function NewFeedbackPage() {
                           </div>
                         </div>
 
-                        <div className="mt-4">
+                        <div className="mt-3 md:mt-4 md:col-span-2">
                           <Label>Comment (Optional)</Label>
                           <Textarea
                             value={step.comment}
                             onChange={(e) => updateStep(index, "comment", e.target.value)}
                             placeholder="Share any details about this step..."
+                            className="min-h-[80px] md:min-h-[100px]"
                           />
                         </div>
 
                         {steps.length > 1 && (
-                          <div className="flex justify-end mt-4">
+                          <div className="flex justify-end mt-3 md:mt-4 md:col-span-2">
                             <Button
                               type="button"
                               variant="outline"
                               size="sm"
                               onClick={() => removeStep(index)}
+                              className="h-9 md:h-10"
                             >
                               <Trash2 className="h-4 w-4 mr-2" />
                               Remove
@@ -331,11 +340,11 @@ export default function NewFeedbackPage() {
                 </div>
               </div>
 
-              <div className="flex gap-4">
-                <Button type="submit" disabled={loading}>
+              <div className="flex flex-col sm:flex-row gap-3 sm:gap-4">
+                <Button type="submit" disabled={loading} className="h-11 md:h-10 order-1 sm:order-1">
                   {loading ? "Submitting..." : "Submit Feedback"}
                 </Button>
-                <Button type="button" variant="outline" asChild>
+                <Button type="button" variant="outline" asChild className="h-11 md:h-10 order-2 sm:order-2">
                   <Link href="/dashboard">Cancel</Link>
                 </Button>
               </div>

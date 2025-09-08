@@ -53,11 +53,12 @@ export interface PaginationOptions {
 class FeedbackService {
   private collectionName = 'feedbacks'
 
-  async createFeedback(feedbackData: Omit<Feedback, 'id' | 'createdAt' | 'updatedAt'>): Promise<string> {
+  async createFeedback(feedbackData: Omit<Feedback, 'id' | 'createdAt' | 'updatedAt'>, isAnonymous?: boolean): Promise<string> {
     try {
       const now = new Date()
       const docRef = await addDoc(collection(db, this.collectionName), {
         ...feedbackData,
+        userId: isAnonymous ? 'anonymous' : feedbackData.userId,
         createdAt: Timestamp.fromDate(now),
         updatedAt: Timestamp.fromDate(now),
       })
